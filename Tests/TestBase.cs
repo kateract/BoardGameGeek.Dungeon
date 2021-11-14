@@ -2,7 +2,7 @@ using System;
 using Pocket;
 using Xunit.Abstractions;
 
-namespace BoardGameGeek.Dungeon
+namespace BoardGameGeek.Library
 {
     public abstract class TestBase : IDisposable
     {

@@ -5,14 +5,20 @@ using System.CommandLine.Builder;
 using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
 using System.Threading.Tasks;
-using BoardGameGeek.Dungeon.Services;
-
+using BoardGameGeek.Library.Services;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 namespace BoardGameGeek.Dungeon.CommandLine
 {
     public static class Bootstrap
     {
+        static ILogger logger;
         static Bootstrap()
         {
+            var loggerFactory = LoggerFactory.Create(builder =>{
+                builder.AddConsole();
+            });
+            logger = loggerFactory.CreateLogger("Dungeon");
             var userNameArgument = new Argument<string> { Name = "username", Description = "Geek username." };
             var passwordArgument = new Argument<string> { Name = "password", Description = "Geek password." };
 
@@ -55,7 +61,7 @@ namespace BoardGameGeek.Dungeon.CommandLine
             {
                 year = null;
             }
-            var processor = new Processor(new BggService());
+            var processor = new Processor(new BggService(logger));
             var renderer = new Renderer();
             await renderer.RenderPlays(userName, year, processor.ProcessPlays(userName, year));
         }
@@ -66,14 +72,14 @@ namespace BoardGameGeek.Dungeon.CommandLine
             {
                 year = null;
             }
-            var processor = new Processor(new BggService());
+            var processor = new Processor(new BggService(logger));
             var renderer = new Renderer();
             await renderer.RenderStats(userName, year, processor.ProcessStats(userName, year));
         }
 
         private static Task LoginUserAsync(string userName, string password)
         {
-            var authenticator = new Authenticator(new BggService());
+            var authenticator = new Authenticator(new BggService(logger), logger);
             return authenticator.AuthenticateUser(userName, password);
         }
 
@@ -83,11 +89,11 @@ namespace BoardGameGeek.Dungeon.CommandLine
             {
                 gameId = 1; //TODO search for game name
             }
-            var bggService = new BggService();
-            var authenticator = new Authenticator(bggService);
+            var bggService = new BggService(logger);
+            var authenticator = new Authenticator(bggService, logger);
             await authenticator.AuthenticateUser(userName, password);
-            var logger = new Logger(bggService);
-            await logger.LogPlay(date, location, quantity, gameId.Value, length, incomplete, noWinStats, comments);
+            var playLogger = new PlayLogger(bggService, logger);
+            await playLogger.LogPlay(date, location, quantity, gameId.Value, length, incomplete, noWinStats, comments);
         }
 
         public static Parser Parser { get; }

@@ -1,17 +1,18 @@
 using System;
 using System.Threading.Tasks;
-using BoardGameGeek.Dungeon.Models;
-using BoardGameGeek.Dungeon.Services;
-using Pocket;
-using static Pocket.Logger<BoardGameGeek.Dungeon.Logger>;
+using BoardGameGeek.Library.Models;
+using Microsoft.Extensions.Logging;
 
-namespace BoardGameGeek.Dungeon
+namespace BoardGameGeek.Library.Services
 {
-    public class Logger
+    public class PlayLogger
     {
-        public Logger(IBggService bggService)
+        private readonly ILogger logger;
+
+        public PlayLogger(IBggService bggService, ILogger logger)
         {
             BggService = bggService;
+            this.logger = logger;
         }
 
         public Task LogPlay(DateTime date, string location, int quantity, int gameId, int length, bool isIncomplete, bool noWinStats, string comments)
@@ -27,7 +28,7 @@ namespace BoardGameGeek.Dungeon
                 NoWinStats = noWinStats,
                 Comments = comments
             };
-            Log.Info($"Logging play {play}");
+            logger.LogInformation($"Logging play {play}");
             return BggService.LogUserPlayAsync(play);
         }
 

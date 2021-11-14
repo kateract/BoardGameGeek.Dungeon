@@ -4,60 +4,60 @@ using System.Xml.Serialization;
 // ReSharper disable StringLiteralTypo
 // ReSharper disable UnusedMember.Global
 
-namespace BoardGameGeek.Dungeon.Services
+namespace BoardGameGeek.Library.Models
 {
     [XmlRoot("items")]
-    public class CollectionItems
+    internal class CollectionItems
     {
         [XmlAttribute("totalitems")]
         public int TotalItems { get; set; }
 
         [XmlAttribute("termsofuse")]
-        public string TermsOfUse { get; set; }
+        public string? TermsOfUse { get; set; }
 
         [XmlAttribute("pubdate")]
-        public string PubDate { get; set; }
+        public string? PubDate { get; set; }
 
         [XmlElement("item")]
-        public CollectionItem[] Items { get; set; }
+        public CollectionItem[] Items { get; set; } = {};
     }
 
-    public class CollectionItem
+    internal class CollectionItem
     {
         [XmlAttribute("objecttype")]
-        public string ObjectType { get; set; }
+        public string? ObjectType { get; set; }
 
         [XmlAttribute("objectid")]
         public int ObjectId { get; set; }
 
         [XmlAttribute("subtype")]
-        public string Subtype { get; set; }
+        public string? Subtype { get; set; }
 
         [XmlElement("name")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [XmlElement("yearpublished")]
         public int YearPublished { get; set; }
 
         [XmlElement("image")]
-        public string Image { get; set; }
+        public string? Image { get; set; }
 
         [XmlElement("thumbnail")]
-        public string Thumbnail { get; set; }
+        public string? Thumbnail { get; set; }
 
         [XmlElement("numplays")]
         public int NumPlays { get; set; }
 
         [XmlElement("comment")]
-        public string Comments { get; set; }
+        public string? Comments { get; set; }
 
         [XmlElement("status")]
-        public CollectionItemStatus Status { get; set; }
+        public CollectionItemStatus? Status { get; set; }
 
-        public override string ToString() => $"Name = {Name}, NumPlays = {NumPlays}";
+        public override string? ToString() => $"Name = {Name}, NumPlays = {NumPlays}";
     }
 
-    public class CollectionItemStatus
+    internal class CollectionItemStatus
     {
         [XmlAttribute("own")]
         public bool Own { get; set; }
@@ -87,9 +87,9 @@ namespace BoardGameGeek.Dungeon.Services
         public bool Preordered { get; set; }
 
         [XmlAttribute("lastmodified")]
-        public string LastModified { get; set; }
+        public string? LastModified { get; set; }
 
-        public override string ToString()
+        public override string? ToString()
         {
             var builder = new StringBuilder();
             if (Own)

@@ -5,15 +5,15 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
 using System.Threading.Tasks;
-using BoardGameGeek.Dungeon.Models;
+using BoardGameGeek.Library.Models;
 using Flurl.Http;
-using Pocket;
+using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Retry;
 
 // ReSharper disable StringLiteralTypo
 
-namespace BoardGameGeek.Dungeon.Services
+namespace BoardGameGeek.Library.Services
 {
     public interface IBggService
     {
@@ -31,15 +31,15 @@ namespace BoardGameGeek.Dungeon.Services
         {
             public int PlayId { get; set; }
             public int NumPlays { get; set; }
-            public string Html { get; set; }
-            public string Error { get; set; }
+            public string? Html { get; set; }
+            public string? Error { get; set; }
         }
 
-        public BggService()
+        public BggService(ILogger logger)
         {
             FlurlClient = new FlurlClient("https://boardgamegeek.com")
             {
-                Settings = { BeforeCall = call => { Logger<BggService>.Log.Trace($"{call.Request.Verb} {call.Request.Url}"); } }
+                Settings = { BeforeCall = call => { logger.LogTrace($"{call.Request.Verb} {call.Request.Url}"); } }
             };
             RetryPolicy = Policy.Handle<FlurlHttpException>(ex => ex.Call.HttpResponseMessage.StatusCode == HttpStatusCode.TooManyRequests)
                 .OrResult<IFlurlResponse>(response => response.ResponseMessage.StatusCode == HttpStatusCode.Accepted)
@@ -47,13 +47,15 @@ namespace BoardGameGeek.Dungeon.Services
                 {
                     if (response.Exception is FlurlHttpException ex) //TODO once throttled, introduce delay for all subsequent calls
                     {
-                        Logger<BggService>.Log.Warning($"{ex.Call.HttpResponseMessage.StatusCode:D} {ex.Call.HttpResponseMessage.StatusCode}");
+                        logger.LogWarning($"{ex.Call.HttpResponseMessage.StatusCode:D} {ex.Call.HttpResponseMessage.StatusCode}");
                     }
                     else
                     {
-                        Logger<BggService>.Log.Warning($"{response.Result.ResponseMessage.StatusCode:D} {response.Result.ResponseMessage.StatusCode}");
+                        logger.LogWarning($"{response.Result.ResponseMessage.StatusCode:D} {response.Result.ResponseMessage.StatusCode}");
                     }
                 });
+            this.logger = logger;
+            this.Cookies = new CookieJar();
         }
 
         public async IAsyncEnumerable<Thing> GetThingsAsync(IEnumerable<int> ids)
@@ -71,22 +73,23 @@ namespace BoardGameGeek.Dungeon.Services
 
             var thingCollections = ids.Distinct()
                 .OrderBy(id => id)
-                .Buffer(100)
-                .ToAsyncEnumerable()
-                .SelectAwait(GetThingCollectionAsync);
+                .Chunk(100)
+                .Select(async chunk => await GetThingCollectionAsync(chunk));
+            
 
-            await foreach (var thingCollection in thingCollections)
+            foreach (var thingCollection in thingCollections)
             {
-                foreach (var item in thingCollection.Items)
+                
+                foreach (var item in (await thingCollection).Items)
                 {
                     yield return new Thing
                     {
                         Id = item.Id,
                         Type = item.Type,
-                        Name = item.Names.First().Value,
-                        Image = item.Image,
-                        Thumbnail = item.Thumbnail,
-                        Links = item.Links.Select(link => new ThingLink
+                        Name = item?.Names.First().Value,
+                        Image = item?.Image,
+                        Thumbnail = item?.Thumbnail,
+                        Links = item?.Links.Select(link => new ThingLink
                         {
                             Id = link.Id,
                             Type = link.Type,
@@ -154,7 +157,8 @@ namespace BoardGameGeek.Dungeon.Services
             {
                 foreach (var play in userPlays.Plays)
                 {
-                    var item = play.Items.Single();
+                    var item = play.Items?.Single();
+                    if (item is null) continue;
                     yield return new Play
                     {
                         PlayId = play.Id,
@@ -250,5 +254,6 @@ namespace BoardGameGeek.Dungeon.Services
 
         private static readonly XmlMediaTypeFormatter XmlFormatter = new XmlMediaTypeFormatter { UseXmlSerializer = true };
         private static readonly MediaTypeFormatterCollection XmlFormatterCollection = new MediaTypeFormatterCollection(new MediaTypeFormatter[] { XmlFormatter });
+        private readonly ILogger logger;
     }
 }

@@ -56,7 +56,7 @@ namespace BoardGameGeek.Dungeon.Extensions
 
         public static bool ReadBoolean(this ref Utf8JsonReader reader, string propertyName) => reader.ReadProperty(propertyName).GetBoolean();
 
-        public static string ReadString(this ref Utf8JsonReader reader, string propertyName) => reader.ReadProperty(propertyName).GetString();
+        public static string? ReadString(this ref Utf8JsonReader reader, string propertyName) => reader.ReadProperty(propertyName).GetString();
 
         public static T ReadEnum<T>(this ref Utf8JsonReader reader, string propertyName) where T : struct, Enum => reader.ReadProperty(propertyName).GetEnum<T>();
 

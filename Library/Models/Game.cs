@@ -1,12 +1,12 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace BoardGameGeek.Dungeon.Models
+namespace BoardGameGeek.Library.Models
 {
     public class Game
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public bool IsExpansion { get; set; }
         public int ParentId { get; set; }
         public int Plays { get; set; }
@@ -15,11 +15,11 @@ namespace BoardGameGeek.Dungeon.Models
         public int CumulativeSessions { get; set; }
         public bool IsHighlight { get; set; }
         public bool IsNew { get; set; }
-        public string Comments { get; set; }
+        public string? Comments { get; set; }
 
         public override string ToString() => $"{Plays}x {Name} (\u03a3 {CumulativePlays}x)";
 
-        internal static bool IsHighlightMatch(string comments, int? year)
+        public static bool IsHighlightMatch(string comments, int? year)
         {
             var highlights = HighlightsMatchRegex.Matches(comments ?? string.Empty)
                 .SelectMany(match => HighlightsSplitRegex.Split(match.Value).Select(int.Parse)).ToArray();

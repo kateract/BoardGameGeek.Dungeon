@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using BoardGameGeek.Dungeon.Models;
-using BoardGameGeek.Dungeon.Services;
+using BoardGameGeek.Library.Models;
+using BoardGameGeek.Library.Services;
 using Pocket;
 using static Pocket.Logger<BoardGameGeek.Dungeon.Processor>;
 

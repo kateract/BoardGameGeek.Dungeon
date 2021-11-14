@@ -5,94 +5,94 @@ using System.Xml.Serialization;
 // ReSharper disable StringLiteralTypo
 // ReSharper disable UnusedMember.Global
 
-namespace BoardGameGeek.Dungeon.Services
+namespace BoardGameGeek.Library.Models
 {
     [XmlRoot("items")]
     public class ThingItems
     {
         [XmlAttribute("termsofuse")]
-        public string TermsOfUse { get; set; }
+        public string? TermsOfUse { get; set; }
 
         [XmlElement("item")]
-        public ThingItem[] Items { get; set; }
+        public ThingItem[] Items { get; set; } = {};
     }
 
     public class ThingItem
     {
         [XmlAttribute("type")]
-        public string Type { get; set; }
+        public string? Type { get; set; }
 
         [XmlAttribute("id")]
         public int Id { get; set; }
 
         [XmlElement("image")]
-        public string Image { get; set; }
+        public string? Image { get; set; }
 
         [XmlElement("thumbnail")]
-        public string Thumbnail { get; set; }
+        public string? Thumbnail { get; set; }
 
         [XmlElement("name")]
-        public ThingItemName[] Names { get; set; }
+        public ThingItemName[] Names { get; set; } = {};
 
         [XmlElement("description")]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [XmlElement("yearpublished")]
-        public ThingItemIntegerValue YearPublished { get; set; }
+        public ThingItemIntegerValue? YearPublished { get; set; }
 
         [XmlElement("minplayers")]
-        public ThingItemIntegerValue MinPlayers { get; set; }
+        public ThingItemIntegerValue? MinPlayers { get; set; }
 
         [XmlElement("maxplayers")]
-        public ThingItemIntegerValue MaxPlayers { get; set; }
+        public ThingItemIntegerValue? MaxPlayers { get; set; }
 
         [XmlElement("playingtime")]
-        public ThingItemIntegerValue PlayingTime { get; set; }
+        public ThingItemIntegerValue? PlayingTime { get; set; }
 
         [XmlElement("minplaytime")]
-        public ThingItemIntegerValue MinPlayTime { get; set; }
+        public ThingItemIntegerValue? MinPlayTime { get; set; }
 
         [XmlElement("maxplaytime")]
-        public ThingItemIntegerValue MaxPlayTime { get; set; }
+        public ThingItemIntegerValue? MaxPlayTime { get; set; }
 
         [XmlElement("minage")]
-        public ThingItemIntegerValue MinAge { get; set; }
+        public ThingItemIntegerValue? MinAge { get; set; }
 
         [XmlElement("link")]
-        public ThingItemLink[] Links { get; set; }
+        public ThingItemLink[] Links { get; set; } = {};
 
-        public override string ToString() => $"Type = {Type}, Name = {Names.First().Value}";
+        public override string? ToString() => $"Type = {Type}, Name = {Names?.First().Value ?? string.Empty}";
     }
 
     public class ThingItemName
     {
         [XmlAttribute("type")]
-        public string Type { get; set; }
+        public string? Type { get; set; }
 
         [XmlAttribute("sortindex")]
         public int SortIndex { get; set; }
 
         [XmlAttribute("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
-        public override string ToString() => $"Type = {Type}, Value = {Value}";
+        public override string? ToString() => $"Type = {Type}, Value = {Value}";
     }
 
     public class ThingItemLink
     {
         [XmlAttribute("type")]
-        public string Type { get; set; }
+        public string? Type { get; set; }
 
         [XmlAttribute("id")]
         public int Id { get; set; }
 
         [XmlAttribute("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         [XmlAttribute("inbound")]
         public bool Inbound { get; set; }
 
-        public override string ToString() => $"Type = {Type}, Value = {Value}";
+        public override string? ToString() => $"Type = {Type}, Value = {Value}";
     }
 
     [DebuggerDisplay("{" + nameof(Value) + "}")]

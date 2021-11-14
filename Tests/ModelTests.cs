@@ -1,10 +1,10 @@
-using BoardGameGeek.Dungeon.Models;
+using BoardGameGeek.Library.Models;
 using FluentAssertions;
 using Xunit;
 
 // ReSharper disable ConvertToConstant.Local
 
-namespace BoardGameGeek.Dungeon
+namespace BoardGameGeek.Library
 {
     public class ModelTests
     {

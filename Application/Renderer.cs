@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BoardGameGeek.Dungeon.Models;
+using BoardGameGeek.Library.Models;
 using Pocket;
 using static Pocket.Logger<BoardGameGeek.Dungeon.Renderer>;
 

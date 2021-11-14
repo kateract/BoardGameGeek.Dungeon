@@ -1,6 +1,6 @@
 using System;
 
-namespace BoardGameGeek.Dungeon.Models
+namespace BoardGameGeek.Library.Models
 {
     public class Summary
     {

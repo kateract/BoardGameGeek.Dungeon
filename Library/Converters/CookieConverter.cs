@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 using BoardGameGeek.Dungeon.Extensions;
 using Flurl.Http;
 
-namespace BoardGameGeek.Dungeon.Converters
+namespace BoardGameGeek.Library.Converters
 {
     public sealed class CookieConverter : JsonConverter<FlurlCookie>
     {
